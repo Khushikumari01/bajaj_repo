@@ -7,19 +7,17 @@ const cors = require('cors');
 
 const app = express();
 const port = 3000;
-app.use(cors());
-
-// Middleware
+app.use(cors({
+    origin: 'https://khushikumaribajajtask.netlify.app'
+}));
 app.use(bodyParser.json({ limit: '10mb' }));
+app.use(express.json()); 
 
-// Helper function to determine if a character is a number
 const isNumber = (char) => !isNaN(char);
 
-// POST /bfhl route
 app.post('/bfhl', (req, res) => {
     const { data, file_b64 } = req.body;
 
-    // Check if data is provided and is an array
     if (!data || !Array.isArray(data)) {
         return res.status(400).json({
             "is_success": false,
@@ -27,12 +25,10 @@ app.post('/bfhl', (req, res) => {
         });
     }
 
-    // User info
-    const user_id = "john_doe_17091999"; // Change as needed
-    const email = "john@xyz.com"; // Hardcoded for now
-    const roll_number = "ABCD123"; // Hardcoded for now
+    const user_id = "john_doe_17091999";
+    const email = "john@xyz.com"; 
+    const roll_number = "ABCD123"; 
 
-    // Separate numbers and alphabets from the data array
     let numbers = [];
     let alphabets = [];
     let highest_lowercase = '';
@@ -42,14 +38,12 @@ app.post('/bfhl', (req, res) => {
             numbers.push(item);
         } else if (/[a-zA-Z]/.test(item)) {
             alphabets.push(item);
-            // Check for the highest lowercase alphabet
             if (item === item.toLowerCase() && item > highest_lowercase) {
                 highest_lowercase = item;
             }
         }
     });
 
-    // Validate and process the base64 file
     let file_valid = false;
     let file_mime_type = '';
     let file_size_kb = 0;
@@ -65,7 +59,6 @@ app.post('/bfhl', (req, res) => {
         }
     }
 
-    // Prepare response
     const response = {
         "is_success": true,
         "user_id": user_id,
@@ -79,11 +72,9 @@ app.post('/bfhl', (req, res) => {
         "file_size_kb": file_size_kb
     };
 
-    // Send the response
     res.status(200).json(response);
 });
 
-// GET /bfhl route
 app.get('/bfhl', (req, res) => {
     const response = {
         "operation_code": 1
@@ -92,7 +83,6 @@ app.get('/bfhl', (req, res) => {
     res.status(200).json(response);
 });
 
-// Start the server
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
